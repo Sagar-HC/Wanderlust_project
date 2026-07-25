@@ -1,0 +1,28 @@
+<% layout("/layout/boilerplate") %>
+
+<body>
+    <h2>all listings</h2>
+    <!-- <form method= "GET" action="/listings/new">
+        <button>add new listing </button>
+    </form> -->
+<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
+
+   
+<% for(let listing of allListing){%>
+    
+  <div class="card col listing-card" >
+    <a href="/listings/<%=listing._id%>" class="listing-link"><img src="<%= listing.image%>" class="card-img-top" alt="listing_image" style="height:20rem;"></a>
+    
+    <div class="card-body">
+    <a href="/listings/<%=listing._id%>"class="listing-link"><h5 class="card-title"><%= listing.title%></h5></a>
+    <p class="card-text">
+        <br>
+        ₹<%=  listing.price%>/night 
+    </p>
+    </div>
+  </div>
+
+<%}%>
+</div>
+    
+</body>
