@@ -104,12 +104,13 @@ app.use("/listings",listingRoute);
 app.use("/listings/:id/reviews",reviewsRoute);
 app.use("/",userRoute);
 
-app.use((req, res) => { 
+app.use((req, res,next) => { 
     res.status(404).send("pagenotfound");
 });
 
-app.use((err,req,res,next)=>{
-    res.send("something went wrong");
+app.use((err, req, res, next) => {
+    let { statusCode = 500, message = "something went wrong" } = err;
+    res.status(statusCode).send(message);
 });
 
 
