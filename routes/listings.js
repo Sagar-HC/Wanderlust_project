@@ -5,12 +5,11 @@ const Listing = require("../models/listing.js");
 const wrapAsync = require("../utils/wrapAsync.js");
 const { isLoggedIn ,isOwner,validateListing } = require("../middleware.js");
 
+const listingController = require("../controllers/listu.js");
+
 
 //index route   
-router.get("/",async (req,res)=>{
-    const allListing = await Listing.find({});
-    res.render("listings/index.ejs",{allListing});
-});
+router.get("/",wrapAsync(listingController.index) );
 
 // new route 
 // basically this route was acting as listings/id route because the next show route , so this was written before that so that issue would'nt hrouteren
@@ -19,35 +18,10 @@ router.get("/new",isLoggedIn,validateListing,(req,res)=>{
 });
 
 //show routecc
-router.get("/:id",async(req,res)=>{
-    // console.log(req);
-    let { id } = req.params;
-    const listing = await Listing.findById(id).populate({
-        path:"reviews",
-        populate:{
-            path:"author",
-        },
-    }).populate("owner"); 
-    if(!listing){
-        req.flash("error"," listing not found ");
-        res.redirect("/listings");
-    }
-    console.log(listing);
-    res.render("listings/show.ejs",{ listing });
+router.get("/:id",wrapAsync(listingController.showRoute));
 
-});
-
-//create route
-router.post("/",isLoggedIn,validateListing,async(req,res,next)=>{
-        let result = listingSchema.validate(req.body.review);
-        console.log(result);
-        const newListing = new Listing(req.body.listing);
-        newListing.owner = req.user._id;    
-        await newListing.save();
-        req.flash("success","New Listing created ");
-        res.redirect("/listings");
-       
-});
+//create  listing route
+router.post("/",isLoggedIn,validateListing,wrapAsync(listingController.createListing));
 
 //edit route 
 router.get("/:id/edit",isLoggedIn,isOwner,validateListing,async(req,res)=>{
