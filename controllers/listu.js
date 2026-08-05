@@ -5,7 +5,7 @@ module.exports.index = async(req,res)=>{
     res.render("listings/index.ejs",{allListing});
 };
 
-module.exports.showRoute = (async(req,res)=>{
+module.exports.showRoute = async(req,res)=>{
     // console.log(req);
     let { id } = req.params;
     const listing = await Listing.findById(id).populate({
@@ -21,9 +21,9 @@ module.exports.showRoute = (async(req,res)=>{
     console.log(listing);
     res.render("listings/show.ejs",{ listing });
 
-});
+};
 
-module.exports.createListing= (async(req,res,next)=>{
+module.exports.createListing= async(req,res,next)=>{
         let result = listingSchema.validate(req.body.review);
         console.log(result);
 
@@ -36,4 +36,30 @@ module.exports.createListing= (async(req,res,next)=>{
         req.flash("success","New Listing created ");
         res.redirect("/listings");
        
-})
+};
+
+module.exports.editListing = async(req,res)=>{
+    let { id } = req.params;
+    const listing = await Listing.findById(id);
+    res.render("listings/edit.ejs",{ listing });
+}
+
+module.exports.updateListing = async (req,res) =>{
+    let {id} =req.params;
+    await Listing.findByIdAndUpdate(id,{ ...req.body.listing});
+     req.flash("success","Listing updated ");
+     if(!listing){
+        req.flash("error"," listing not found ");
+        res.redirect("/listings");
+    }
+    res.redirect(`/listings/${id}`);
+    
+};
+
+module.exports.deleteListings = async (req,res) =>{
+    let {id} =req.params;
+    let deletedListing = await Listing.findByIdAndDelete(id);
+    console.log(deletedListing);
+    req.flash("success","Listing deleted ");
+    res.redirect("/listings");
+};
