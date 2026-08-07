@@ -9,7 +9,8 @@ const listingController = require("../controllers/listu.js");
 
 
 //index route   
-router.get("/",wrapAsync(listingController.index) );
+router.route("/").get(wrapAsync(listingController.index))
+.post(isLoggedIn,validateListing,wrapAsync(listingController.createListing));
 
 // new route 
 // basically this route was acting as listings/id route because the next show route , so this was written before that so that issue would'nt hrouteren
@@ -17,20 +18,15 @@ router.get("/new",isLoggedIn,validateListing,(req,res)=>{
         res.render("listings/new.ejs");
 });
 
-//show routecc
-router.get("/:id",wrapAsync(listingController.showRoute));
+//show route
 
-//create  listing route
-router.post("/",isLoggedIn,validateListing,wrapAsync(listingController.createListing));
+router.route("/:id").get(wrapAsync(listingController.showRoute))
+.put( isLoggedIn,isOwner,validateListing,wrapAsync(listingController.updateListing))
+.delete(isLoggedIn, isOwner,wrapAsync (listingController.deleteListings));
+
 
 //edit route 
 router.get("/:id/edit",isLoggedIn,isOwner,validateListing,wrapAsync(listingController.editListing)); 
 //update route
-router.put("/:id", isLoggedIn,isOwner,validateListing,wrapAsync(listingController.updateListing));
-
- 
-
-//delete route
-router.delete("/:id",isLoggedIn, isOwner,wrapAsync (listingController.deleteListings));
 
 module.exports = router;    
