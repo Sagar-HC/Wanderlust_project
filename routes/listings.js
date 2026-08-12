@@ -10,8 +10,10 @@ const listingController = require("../controllers/listu.js");
 
 //index route   
 router.route("/").get(wrapAsync(listingController.index))
-.post(isLoggedIn,validateListing,wrapAsync(listingController.createListing));
-
+// .post(isLoggedIn,validateListing,wrapAsync(listingController.createListing));
+.post((req,res) => {
+        res.send(req.body);
+})
 // new route 
 // basically this route was acting as listings/id route because the next show route , so this was written before that so that issue would'nt hrouteren
 router.get("/new",isLoggedIn,validateListing,(req,res)=>{
