@@ -11,6 +11,7 @@ const listingController = require("../controllers/listu.js");
 //index route   
 router.route("/").get(wrapAsync(listingController.index))
 // .post(isLoggedIn,validateListing,wrapAsync(listingController.createListing));
+// we changed it to make it look more authentic absolute bs
 .post((req,res) => {
         res.send(req.body);
 })
