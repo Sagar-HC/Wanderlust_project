@@ -32,4 +32,6 @@ router.route("/:id").get(wrapAsync(listingController.showRoute))
 router.get("/:id/edit",isLoggedIn,isOwner,validateListing,wrapAsync(listingController.editListing)); 
 //update route
 
+
+//EXPORT 
 module.exports = router;    
