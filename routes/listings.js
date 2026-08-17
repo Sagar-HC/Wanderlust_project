@@ -5,16 +5,20 @@ const Listing = require("../models/listing.js");
 const wrapAsync = require("../utils/wrapAsync.js");
 const { isLoggedIn ,isOwner,validateListing } = require("../middleware.js");
 
+const multer = require("multer");
+const  { storage} =require("../cloudConfig.js");
+const upload  = multer({ storage });
+
 const listingController = require("../controllers/listu.js");
 
 
 //index route   
 router.route("/").get(wrapAsync(listingController.index))
-// .post(isLoggedIn,validateListing,wrapAsync(listingController.createListing));
-// we changed it to make it look more authentic absolute bs
-.post((req,res) => {
-        res.send(req.body);
-})
+.post(isLoggedIn,upload.single('listing[image]'),validateListing,wrapAsync(listingController.createListing));
+
+
+
+ 
 // new route 
 // basically this route was acting as listings/id route because the next show route , so this was written before that so that issue would'nt hrouteren
 router.get("/new",isLoggedIn,validateListing,(req,res)=>{

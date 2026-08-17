@@ -24,15 +24,15 @@ module.exports.showRoute = async(req,res)=>{
 };
 
 module.exports.createListing= async(req,res,next)=>{
-        let result = listingSchema.validate(req.body.review);
-        console.log(result);
-
-         if (!req.body.listing.image || req.body.listing.image.trim() === "") {
-        delete req.body.listing.image;
-    };
-        const newListing = new Listing(req.body.listing);
-        newListing.owner = req.user._id;    
-        await newListing.save();
+   
+        console.log(req.file);
+        let url = req.file.secure_url;
+        let filename = req.file.public_id;
+        console.log(url," ",filename); 
+         const newListing = new Listing(req.body.listing);
+         newListing.owner = req.user._id; 
+         newListing.image = { url, filename};   
+         await newListing.save();
         req.flash("success","New Listing created ");
         res.redirect("/listings");
        
