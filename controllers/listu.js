@@ -48,8 +48,8 @@ module.exports.editListing = async(req,res)=>{
     }
 
     let originalImageUrl = listing.image.url;
-    originalImageUrl.replace("/upload","/upload/w_250");
-    res.render("listings/edit,ejs",{ listing});
+    originalImageUrl= originalImageUrl.replace("/upload","/upload/w_150");
+    res.render("listings/edit.ejs",{ listing,originalImageUrl});
     //here {listing is to pass the  listing variable data to ejs template} 
 }
 
