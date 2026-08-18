@@ -14,7 +14,7 @@ const storage = new CloudinaryStorage({
   
   filename: function (req, file, cb) {
     cb(undefined, file.originalname);
-  }
+  } 
 });
 
 

@@ -25,15 +25,17 @@ router.get("/new",isLoggedIn,validateListing,(req,res)=>{
         res.render("listings/new.ejs");
 });
 
-//show route
+//update route
 
 router.route("/:id").get(wrapAsync(listingController.showRoute))
-.put( isLoggedIn,isOwner,validateListing,wrapAsync(listingController.updateListing))
+.put( isLoggedIn,isOwner,upload.single('listing[image]'),validateListing,wrapAsync(listingController.updateListing))
 .delete(isLoggedIn, isOwner,wrapAsync (listingController.deleteListings));
 
 
 //edit route 
 router.get("/:id/edit",isLoggedIn,isOwner,validateListing,wrapAsync(listingController.editListing)); 
+
+
 //update route
 
 

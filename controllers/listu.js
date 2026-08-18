@@ -42,11 +42,27 @@ module.exports.editListing = async(req,res)=>{
     let { id } = req.params;
     const listing = await Listing.findById(id);
     res.render("listings/edit.ejs",{ listing });
+    if(!listing){
+        res.flash("error","listing not present");
+        res.redirect("/listings");
+    }
+
+    let originalImageUrl = listing.image.url;
+    originalImageUrl.replace("/upload","/upload/w_250");
+    res.render("listings/edit,ejs",{ listing});
+    //here {listing is to pass the  listing variable data to ejs template} 
 }
 
 module.exports.updateListing = async (req,res) =>{
     let {id} =req.params;
-    await Listing.findByIdAndUpdate(id,{ ...req.body.listing});
+    let listing = await Listing.findByIdAndUpdate(id,{ ...req.body.listing});
+
+    if(typeof req.file != "undefined"){
+         let url = req.file.secure_url;
+        let filename = req.file.public_id;
+        listing.image = { url, filename };
+        await listing.save(); 
+    }
      req.flash("success","Listing updated ");
      if(!listing){
         req.flash("error"," listing not found ");
