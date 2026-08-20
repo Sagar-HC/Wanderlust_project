@@ -1,5 +1,8 @@
 if(process.env.NODE_ENV != "production"){require("dotenv").config();}
 
+const dns = require('dns');
+dns.setServers(['8.8.8.8', '8.8.4.4']);
+
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
@@ -8,6 +11,8 @@ const methodOverride = require("method-override");
 const ejsmate = require('ejs-mate');
 const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
+//connect mongo
+const { MongoStore } = require('connect-mongo');
 const flash = require("connect-flash");
 
 const passport = require("passport");
@@ -16,7 +21,9 @@ const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 const Review = require("./models/review.js");
 
-const mongo_url="mongodb://127.0.0.1:27017/wanderlust";
+//link to the db 
+// const mongo_url="mongodb://127.0.0.1:27017/wanderlust";
+const db_url = process.env.ATLASDB_URL;
 
 //this is the seed data filepath
 const { data }=require("./init/data.js");
@@ -48,17 +55,35 @@ main().then(() =>{
 });
 
 async function main() {
-    await mongoose.connect(mongo_url);
+    // console.log("DB URL:", db_url);
+    await mongoose.connect(db_url);
 } 
+
 app.listen(8080,()=>{
     console.log("app is listnening");
 });
-app.get("/",(req,res)=>{
+app.get("/",(req,res)=>{ 
     res.send("hi i am root");
+});
+
+//mongo sessions
+const store = MongoStore.create({
+    mongoUrl :db_url,
+    //secret is used to store secret and crypto is used for encryption
+    crypto:{
+        secret:"mysecurecode"
+    },
+    //touchAfter is used to update the session after a certain time interval(in secs)
+    touchAfter: 24*3600,
+});
+
+store.on("error",()=>{
+    console.log("error occured in mongostore",err);
 });
 
 //session options,these are the conditions for the session  
 const sessionOptions = {
+    store,
     secret:"mysecurecode",
     resave:false,
     saveUninitialized:true,
@@ -68,6 +93,8 @@ const sessionOptions = {
         httpOnly:true
     },
 };
+
+
 
 app.use(session(sessionOptions));
 //flash should always be used before routes.
