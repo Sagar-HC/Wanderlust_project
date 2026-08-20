@@ -63,7 +63,7 @@ app.listen(8080,()=>{
     console.log("app is listnening");
 });
 app.get("/",(req,res)=>{ 
-    res.send("hi i am root");
+    res.redirect("/listings");
 });
 
 //mongo sessions
@@ -71,7 +71,7 @@ const store = MongoStore.create({
     mongoUrl :db_url,
     //secret is used to store secret and crypto is used for encryption
     crypto:{
-        secret:"mysecurecode"
+        secret:process.env.SECRET
     },
     //touchAfter is used to update the session after a certain time interval(in secs)
     touchAfter: 24*3600,
@@ -84,7 +84,7 @@ store.on("error",()=>{
 //session options,these are the conditions for the session  
 const sessionOptions = {
     store,
-    secret:"mysecurecode",
+    secret:process.env.SECRET,
     resave:false,
     saveUninitialized:true,
     cookie:{
